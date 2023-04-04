@@ -1,6 +1,7 @@
 from vk_bot import vk_bot
 from vk_bot import bot_types
 import API.starwars
+from cb import getCourse
 
 
 """https://vk.com/guitar_music_all"""
@@ -19,6 +20,9 @@ star_api = API.starwars.StarWarsAPI()
 """Добавьте ещё один парсер. Добавьте отклик на сообщение пользователя: “корабли”. 
 При вводе такого текста сообщения бот должен выдавать звёздный корабль с максимальной скоростью. 
 Ссылка на API -> https://swapi.dev/api/"""
+
+"""Измените код парсера валют таким образом, что команда которая подаётся на 
+вход имеет следующий вид: -к “ВАЛЮТА” и далее он выдаёт курс соответствующей валюты."""
 
 
 @bot.message_handler(commands=['Привет', 'привет', 'прив'])
@@ -46,7 +50,13 @@ def send_planets(message):
 
 
 @bot.message_handler(content_types=['text'])
-def common_text(message):
+def common_text(message: str):
+    match message['text'].split():
+        case [command, header]:
+            if '-' == command[0]:
+                match command[1:]:
+                    case "k":
+                        return bot.answer_text(text=f"{header}: {getCourse(header)} рублей")
     return bot.answer_text(text='Your text: \'{}\''.format(message['text']))
 
 
